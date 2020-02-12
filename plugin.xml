@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-naver" name="cordova-plugin-naver" version="1.0.0"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name>Naver</name>
+    <description>Naver Cordova Plugin</description>
+
+    <!-- 네이버 앱 OAuth 정보 -->
+    <preference name="OAUTH_CLIENT_ID"/>
+    <preference name="OAUTH_CLIENT_SECRET"/>
+    <preference name="OAUTH_CLIENT_NAME"/>
+
+    <engines>
+        <!-- Requires Gradle building -->
+        <engine name="cordova-android" version=">3.9.9"/>
+        <engine name="cordova-ios" version=">=3.5.0"/>
+    </engines>
+
+    <!-- Android -->
+    <platform name="android">
+        <js-module src="www/naver-native.js" name="Naver">
+            <clobbers target="Naver"/>
+        </js-module>
+
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="Naver">
+                <param name="android-package" value="io.ghyeok.cordova.naver.NaverPlugin"/>
+            </feature>
+        </config-file>
+
+        <!-- NaverPlugin OAuth2.0 변수 저장 -->
+        <source-file src="src/android/naver.xml" target-dir="res/values"/>
+        <config-file parent="/*" target="res/values/naver.xml">
+            <string name="naver_client_id">$OAUTH_CLIENT_ID</string>
+            <string name="naver_client_secret">$OAUTH_CLIENT_SECRET</string>
+            <string name="naver_client_name">$OAUTH_CLIENT_NAME</string>
+        </config-file>
+
+        <!-- Android Manifest Config -->
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <!-- Network State 퍼미션 -->
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        </config-file>
+
+        <framework src="src/android/naver.gradle" custom="true" type="gradleReference" />
+
+        <config-file parent="application" target="AndroidManifest.xml">
+        </config-file>
+
+        <!-- cordova plugin src files -->
+        <source-file src="src/android/io/ghyeok/cordova/naver/NaverPlugin.java"
+                     target-dir="src/io/ghyeok/cordova/naver"/>
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <js-module src="www/naver-native.js" name="Naver">
+            <clobbers target="Naver"/>
+        </js-module>
+
+        <config-file parent="/*" target="config.xml">
+            <feature name="Naver">
+                <param name="ios-package" value="NaverPlugin"/>
+            </feature>
+        </config-file>
+
+        <!-- 네이버 OAuth 설정 -->
+        <config-file target="*-Info.plist" parent="NaverClientID">
+            <string>$OAUTH_CLIENT_ID</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NaverClientSecret">
+            <string>$OAUTH_CLIENT_SECRET</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NaverClientName">
+            <string>$OAUTH_CLIENT_NAME</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NaverAppScheme">
+            <string>naver$OAUTH_CLIENT_ID</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <string>naverplugin</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+            <dict>
+                <key>NSExceptionDomains</key>
+                <dict>
+                    <key>naver.net</key>
+                    <dict>
+                        <key>NSIncludesSubdomains</key>
+                        <true/>
+                        <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+                        <false/>
+                    </dict>
+                    <key>naver.com</key>
+                    <dict>
+                        <key>NSIncludesSubdomains</key>
+                        <true/>
+                        <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+                        <false/>
+                    </dict>
+                </dict>
+            </dict>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+            <array>
+                <string>naversearchapp</string>
+                <string>naversearchthirdlogin</string>
+            </array>
+        </config-file>
+
+        <!-- Naver Framework -->
+        <header-file src="src/ios/libs/NaverThirdPartyConstantsForApp.h"/>
+        <header-file src="src/ios/libs/NaverThirdPartyLoginConnection.h"/>
+        <header-file src="src/ios/libs/NLoginThirdPartyOAuth20InAppBrowserViewController.h"/>
+        <source-file src="src/ios/libs/NLoginThirdPartyOAuth20InAppBrowserViewController.m"/>
+        <source-file src="src/ios/libs/libNaverLogin.a" framework="true"/>
+        <resource-file src="src/ios/libs/NaverAuth.bundle"/>
+
+        <!-- 소스  -->
+        <header-file src="src/ios/NaverPlugin.h"/>
+        <source-file src="src/ios/NaverPlugin.m"/>
+    </platform>
+
+</plugin>
